@@ -7,7 +7,7 @@ import hotelsRoute from "./routes/hotels.js";
 import roomsRoute from "./routes/rooms.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
+import payment from "./routes/payment.js"
 const app = express();
 dotenv.config();
 
@@ -33,6 +33,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/users", usersRoute);
 app.use("/api/hotels", hotelsRoute);
 app.use("/api/rooms", roomsRoute);
+app.use("/api/payment", payment);
 
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
@@ -46,6 +47,15 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(8800, () => {
+  console.log("Server started at port no.", 8800);
   connect();
   console.log("Connected to backend.");
+});
+
+app.get("/sucess", (req, res) => {
+  res.send("Congratulations Payment sucessfull🎉🎉🎉");
+});
+
+app.get("/cancel", (req, res) => {
+  res.send("Sorry Payment has been cancel😥😥😥");
 });
