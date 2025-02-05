@@ -5,7 +5,7 @@ import { v2 as cloudinary } from "cloudinary";
 // CREATE HOTEL
 export const createHotel = async (req, res, next) => {
     try {
-        const imageUrls = req.files.map(file => file.path);
+        const imageUrls = req?.files?.map(file => file?.path);
         const newHotel = new Hotel({ ...req.body, photos: imageUrls });
         const savedHotel = await newHotel.save();
         res.status(200).json(savedHotel);
