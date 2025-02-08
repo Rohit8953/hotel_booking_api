@@ -2,17 +2,40 @@ import Hotel from "../models/Hotel.js";
 import Room from "../models/Room.js";
 import { v2 as cloudinary } from "cloudinary";
 
+// Configure Cloudinary (Ensure these values are set in your environment variables)
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET 
+});
+
 // CREATE HOTEL
 export const createHotel = async (req, res, next) => {
     try {
-        const imageUrls = req?.files?.map(file => file?.path);
+        const imageUrls = [];
+
+        // Upload each file to Cloudinary
+        if (req.files) {
+            for (const file of req.files) {
+                const result = await cloudinary.uploader.upload(file.path, {
+                    folder: "hotels", // Optional: store images in a specific folder
+                    use_filename: true,
+                    unique_filename: false,
+                });
+                imageUrls.push(result.secure_url);
+            }
+        }
+
+        // Save hotel with uploaded image URLs
         const newHotel = new Hotel({ ...req.body, photos: imageUrls });
         const savedHotel = await newHotel.save();
+
         res.status(200).json(savedHotel);
     } catch (err) {
         next(err);
     }
 };
+
 
 // UPDATE HOTEL
 export const updateHotel = async (req, res, next) => {
